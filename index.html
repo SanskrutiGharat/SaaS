@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Remote Work Management Platform</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .auth-container {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            width: 100%;
+            max-width: 400px;
+            margin: 20px;
+        }
+
+        .auth-header {
+            background: linear-gradient(135deg, #007bff, #0056b3);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .auth-header h1 {
+            margin: 0;
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        .auth-header p {
+            margin: 10px 0 0 0;
+            opacity: 0.9;
+            font-size: 14px;
+        }
+
+        .auth-content {
+            padding: 30px;
+        }
+
+        .auth-tabs {
+            display: flex;
+            margin-bottom: 30px;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .auth-tab {
+            flex: 1;
+            padding: 12px;
+            text-align: center;
+            cursor: pointer;
+            border: none;
+            background: none;
+            font-size: 16px;
+            font-weight: 500;
+            color: #6c757d;
+            transition: all 0.3s;
+        }
+
+        .auth-tab.active {
+            color: #007bff;
+            border-bottom: 2px solid #007bff;
+        }
+
+        .auth-form {
+            display: none;
+        }
+
+        .auth-form.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #333;
+            font-size: 14px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+            box-sizing: border-box;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #007bff;
+        }
+
+        .form-group input.error {
+            border-color: #dc3545;
+        }
+
+        .password-requirements {
+            font-size: 12px;
+            color: #6c757d;
+            margin-top: 5px;
+        }
+
+        .password-requirements ul {
+            margin: 5px 0;
+            padding-left: 20px;
+        }
+
+        .password-requirements li {
+            margin: 2px 0;
+        }
+
+        .password-requirements li.valid {
+            color: #28a745;
+        }
+
+        .password-requirements li.invalid {
+            color: #dc3545;
+        }
+
+        .auth-button {
+            width: 100%;
+            padding: 12px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+            margin-bottom: 15px;
+        }
+
+        .auth-button:hover:not(:disabled) {
+            background: #0056b3;
+        }
+
+        .auth-button:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+        }
+
+        .error-message {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            border: 1px solid #f5c6cb;
+        }
+
+        .success-message {
+            background: #d4edda;
+            color: #155724;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            border: 1px solid #c3e6cb;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .loading.show {
+            display: block;
+        }
+
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #007bff;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .demo-credentials {
+            background: #e7f3ff;
+            border: 1px solid #b3d9ff;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 20px;
+            font-size: 14px;
+        }
+
+        .demo-credentials h4 {
+            margin: 0 0 10px 0;
+            color: #0056b3;
+        }
+
+        .demo-credentials p {
+            margin: 5px 0;
+            color: #333;
+        }
+
+        .demo-credentials code {
+            background: #f8f9fa;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: monospace;
+        }
+
+        @media (max-width: 480px) {
+            .auth-container {
+                margin: 10px;
+            }
+            
+            .auth-header {
+                padding: 20px;
+            }
+            
+            .auth-content {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="auth-container">
+        <div class="auth-header">
+            <h1>Welcome Back</h1>
+            <p>Sign in to access your workspace</p>
+        </div>
+        
+        <div class="auth-content">
+            <div class="auth-tabs">
+                <button class="auth-tab active" onclick="switchTab('organization')">Register Company</button>
+                <button class="auth-tab" onclick="switchTab('login')">Organization Login</button>
+            </div>
+
+            <div id="errorMessage" class="error-message" style="display: none;"></div>
+            <div id="successMessage" class="success-message" style="display: none;"></div>
+
+            <!-- Login Form -->
+            <form id="loginForm" class="auth-form">
+                <div class="form-group">
+                    <label for="loginUsername">Username or Email</label>
+                    <input type="text" id="loginUsername" name="login" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="loginPassword">Password</label>
+                    <input type="password" id="loginPassword" name="password" required>
+                </div>
+                
+                <button type="submit" class="auth-button" id="loginButton">
+                    Sign In
+                </button>
+            </form>
+
+            <!-- Registration Form -->
+            <form id="registerForm" class="auth-form">
+                <div class="form-group">
+                    <label for="registerUsername">Username</label>
+                    <input type="text" id="registerUsername" name="username" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="registerEmail">Email</label>
+                    <input type="email" id="registerEmail" name="email" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="registerPassword">Password</label>
+                    <input type="password" id="registerPassword" name="password" required>
+                    <div class="password-requirements">
+                        <strong>Password must contain:</strong>
+                        <ul>
+                            <li id="req-length">At least 8 characters</li>
+                            <li id="req-letter">At least one letter</li>
+                            <li id="req-number">At least one number</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="confirmPassword">Confirm Password</label>
+                    <input type="password" id="confirmPassword" name="confirmPassword" required>
+                </div>
+                
+                <button type="submit" class="auth-button" id="registerButton">
+                    Create Account
+                </button>
+            </form>
+
+            <!-- Organization Registration Form -->
+            <form id="organizationForm" class="auth-form active">
+                <div class="form-group">
+                    <label for="orgName">Organization Name</label>
+                    <input type="text" id="orgName" name="organizationName" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="orgAdminEmail">Admin Email</label>
+                    <input type="email" id="orgAdminEmail" name="adminEmail" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="orgAdminPassword">Admin Password</label>
+                    <input type="password" id="orgAdminPassword" name="adminPassword" required>
+                    <small>Minimum 8 characters with letters and numbers</small>
+                </div>
+                
+                <div class="form-group">
+                    <label for="orgIndustry">Industry (Optional)</label>
+                    <select id="orgIndustry" name="industry">
+                        <option value="">Select Industry</option>
+                        <option value="Technology">Technology</option>
+                        <option value="Healthcare">Healthcare</option>
+                        <option value="Finance">Finance</option>
+                        <option value="Education">Education</option>
+                        <option value="Manufacturing">Manufacturing</option>
+                        <option value="Retail">Retail</option>
+                        <option value="Consulting">Consulting</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                
+                <button type="submit" class="auth-button" id="organizationButton">
+                    Create Organization
+                </button>
+                
+                <p class="auth-footer">
+                    Already have an organization? <a href="#" onclick="switchTab('login')">Sign in here</a>
+                </p>
+            </form>
+
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <p>Processing...</p>
+            </div>
+
+            <div class="demo-credentials">
+                <h4>Demo Credentials</h4>
+                <p><strong>Username:</strong> <code>demo</code></p>
+                <p><strong>Email:</strong> <code>demo@example.com</code></p>
+                <p><strong>Password:</strong> <code>demo123</code></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentTab = 'organization';
+
+        function switchTab(tab) {
+            currentTab = tab;
+            
+            // Update tab buttons
+            document.querySelectorAll('.auth-tab').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            // Update forms
+            document.querySelectorAll('.auth-form').forEach(form => {
+                form.classList.remove('active');
+            });
+            
+            if (tab === 'organization') {
+                document.getElementById('organizationForm').classList.add('active');
+            } else if (tab === 'login') {
+                document.getElementById('loginForm').classList.add('active');
+            }
+            
+            // Clear messages
+            hideMessages();
+        }
+
+        function showError(message) {
+            const errorDiv = document.getElementById('errorMessage');
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
+            document.getElementById('successMessage').style.display = 'none';
+        }
+
+        function showSuccess(message) {
+            const successDiv = document.getElementById('successMessage');
+            successDiv.textContent = message;
+            successDiv.style.display = 'block';
+            document.getElementById('errorMessage').style.display = 'none';
+        }
+
+        function hideMessages() {
+            document.getElementById('errorMessage').style.display = 'none';
+            document.getElementById('successMessage').style.display = 'none';
+        }
+
+        function showLoading(show) {
+            document.getElementById('loading').classList.toggle('show', show);
+        }
+
+        function validatePassword(password) {
+            const requirements = {
+                length: password.length >= 8,
+                letter: /[a-zA-Z]/.test(password),
+                number: /\d/.test(password)
+            };
+
+            // Update UI
+            document.getElementById('req-length').className = requirements.length ? 'valid' : 'invalid';
+            document.getElementById('req-letter').className = requirements.letter ? 'valid' : 'invalid';
+            document.getElementById('req-number').className = requirements.number ? 'valid' : 'invalid';
+
+            return Object.values(requirements).every(req => req);
+        }
+
+        // Password validation for registration
+        document.getElementById('registerPassword').addEventListener('input', function() {
+            validatePassword(this.value);
+        });
+
+        // Login form submission
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const data = Object.fromEntries(formData);
+            
+            showLoading(true);
+            hideMessages();
+            
+            try {
+                const response = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    showSuccess('Login successful! Redirecting...');
+                    setTimeout(() => {
+                        window.location.href = '/dashboard.html';
+                    }, 1500);
+                } else {
+                    showError(result.error || 'Login failed');
+                }
+            } catch (error) {
+                showError('Network error. Please try again.');
+            } finally {
+                showLoading(false);
+            }
+        });
+
+        // Registration form submission
+        document.getElementById('registerForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const data = Object.fromEntries(formData);
+            
+            // Validate password
+            if (!validatePassword(data.password)) {
+                showError('Password does not meet requirements');
+                return;
+            }
+            
+            // Check password confirmation
+            if (data.password !== data.confirmPassword) {
+                showError('Passwords do not match');
+                return;
+            }
+            
+            // Remove confirmPassword from data
+            delete data.confirmPassword;
+            
+            showLoading(true);
+            hideMessages();
+            
+            try {
+                const response = await fetch('/api/auth/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    showSuccess('Registration successful! You can now login.');
+                    setTimeout(() => {
+                        switchTab('login');
+                        document.getElementById('loginUsername').value = data.username;
+                    }, 1500);
+                } else {
+                    if (result.details) {
+                        showError(result.details.join(', '));
+                    } else {
+                        showError(result.error || 'Registration failed');
+                    }
+                }
+            } catch (error) {
+                showError('Network error. Please try again.');
+            } finally {
+                showLoading(false);
+            }
+        });
+
+        // Organization registration form submission
+        document.getElementById('organizationForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const data = Object.fromEntries(formData);
+            
+            showLoading(true);
+            hideMessages();
+            
+            try {
+                const response = await fetch('/api/organizations/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    showSuccess('Organization created successfully! You are now logged in as admin.');
+                    // Store token and redirect
+                    localStorage.setItem('token', result.token);
+                    localStorage.setItem('user', JSON.stringify(result.user));
+                    setTimeout(() => {
+                        window.location.href = '/dashboard.html';
+                    }, 2000);
+                } else {
+                    showError(result.error || 'Organization registration failed');
+                }
+            } catch (error) {
+                showError('Network error. Please try again.');
+            } finally {
+                showLoading(false);
+            }
+        });
+
+        // Check for URL error parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const error = urlParams.get('error');
+        if (error) {
+            showError(decodeURIComponent(error));
+        }
+
+        // Auto-fill demo credentials
+        document.querySelector('.demo-credentials').addEventListener('click', function() {
+            document.getElementById('loginUsername').value = 'demo';
+            document.getElementById('loginPassword').value = 'demo123';
+        });
+    </script>
+</body>
+</html>

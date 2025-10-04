@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Remote Work Management Platform</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/design-system.css">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🚀</text></svg>">
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: var(--space-4);
+        }
+
+        .auth-container {
+            width: 100%;
+            max-width: 420px;
+            background: var(--white);
+            border-radius: var(--radius-2xl);
+            box-shadow: var(--shadow-2xl);
+            overflow: hidden;
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        .auth-header {
+            background: linear-gradient(135deg, var(--primary-600), var(--primary-800));
+            color: var(--white);
+            padding: var(--space-8);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .auth-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: pulse 4s ease-in-out infinite;
+        }
+
+        .auth-header h1 {
+            font-size: var(--font-size-3xl);
+            font-weight: var(--font-weight-bold);
+            margin-bottom: var(--space-2);
+            position: relative;
+            z-index: 1;
+        }
+
+        .auth-header p {
+            font-size: var(--font-size-lg);
+            opacity: 0.9;
+            margin: 0;
+            position: relative;
+            z-index: 1;
+        }
+
+        .auth-content {
+            padding: var(--space-8);
+        }
+
+        .auth-tabs {
+            display: flex;
+            margin-bottom: var(--space-8);
+            border-bottom: 2px solid var(--gray-200);
+            position: relative;
+        }
+
+        .auth-tab {
+            flex: 1;
+            padding: var(--space-4) var(--space-6);
+            text-align: center;
+            cursor: pointer;
+            border: none;
+            background: none;
+            font-size: var(--font-size-base);
+            font-weight: var(--font-weight-medium);
+            color: var(--gray-500);
+            transition: all var(--transition-fast);
+            position: relative;
+        }
+
+        .auth-tab.active {
+            color: var(--primary-600);
+        }
+
+        .auth-tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--primary-600);
+            border-radius: var(--radius-full);
+        }
+
+        .auth-form {
+            display: none;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .auth-form.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: var(--space-6);
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: var(--space-2);
+            font-weight: var(--font-weight-medium);
+            color: var(--gray-700);
+            font-size: var(--font-size-sm);
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: var(--space-4);
+            border: 2px solid var(--gray-200);
+            border-radius: var(--radius-lg);
+            font-size: var(--font-size-base);
+            transition: all var(--transition-fast);
+            background: var(--white);
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--primary-500);
+            box-shadow: 0 0 0 3px var(--primary-100);
+        }
+
+        .form-group input.error {
+            border-color: var(--error-500);
+            box-shadow: 0 0 0 3px var(--error-100);
+        }
+
+        .password-requirements {
+            font-size: var(--font-size-xs);
+            color: var(--gray-500);
+            margin-top: var(--space-2);
+        }
+
+        .password-requirements ul {
+            margin: var(--space-1) 0;
+            padding-left: var(--space-5);
+        }
+
+        .password-requirements li {
+            margin: var(--space-1) 0;
+            transition: color var(--transition-fast);
+        }
+
+        .password-requirements li.valid {
+            color: var(--success-600);
+        }
+
+        .password-requirements li.invalid {
+            color: var(--error-500);
+        }
+
+        .auth-button {
+            width: 100%;
+            padding: var(--space-4);
+            background: var(--primary-600);
+            color: var(--white);
+            border: none;
+            border-radius: var(--radius-lg);
+            font-size: var(--font-size-base);
+            font-weight: var(--font-weight-semibold);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            margin-bottom: var(--space-4);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .auth-button:hover:not(:disabled) {
+            background: var(--primary-700);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .auth-button:disabled {
+            background: var(--gray-400);
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .auth-button:active {
+            transform: translateY(0);
+        }
+
+        .error-message {
+            background: var(--error-50);
+            color: var(--error-700);
+            padding: var(--space-4);
+            border-radius: var(--radius-lg);
+            margin-bottom: var(--space-6);
+            font-size: var(--font-size-sm);
+            border: 1px solid var(--error-200);
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+        }
+
+        .error-message::before {
+            content: '⚠️';
+            font-size: var(--font-size-lg);
+        }
+
+        .success-message {
+            background: var(--success-50);
+            color: var(--success-700);
+            padding: var(--space-4);
+            border-radius: var(--radius-lg);
+            margin-bottom: var(--space-6);
+            font-size: var(--font-size-sm);
+            border: 1px solid var(--success-200);
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+        }
+
+        .success-message::before {
+            content: '✅';
+            font-size: var(--font-size-lg);
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            margin: var(--space-6) 0;
+        }
+
+        .loading.show {
+            display: block;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid var(--gray-200);
+            border-top: 4px solid var(--primary-600);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto var(--space-4);
+        }
+
+        .demo-credentials {
+            background: var(--info-50);
+            border: 1px solid var(--info-200);
+            border-radius: var(--radius-lg);
+            padding: var(--space-4);
+            margin-top: var(--space-6);
+            font-size: var(--font-size-sm);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+        }
+
+        .demo-credentials:hover {
+            background: var(--info-100);
+            transform: translateY(-1px);
+        }
+
+        .demo-credentials h4 {
+            margin: 0 0 var(--space-2) 0;
+            color: var(--info-700);
+            font-size: var(--font-size-sm);
+            font-weight: var(--font-weight-semibold);
+        }
+
+        .demo-credentials p {
+            margin: var(--space-1) 0;
+            color: var(--gray-700);
+        }
+
+        .demo-credentials code {
+            background: var(--white);
+            padding: var(--space-1) var(--space-2);
+            border-radius: var(--radius-base);
+            font-family: var(--font-family-mono);
+            font-size: var(--font-size-xs);
+            color: var(--primary-600);
+        }
+
+        .forgot-password {
+            text-align: right;
+            margin-top: var(--space-2);
+        }
+
+        .forgot-password a {
+            color: var(--primary-600);
+            font-size: var(--font-size-sm);
+            text-decoration: none;
+            transition: color var(--transition-fast);
+        }
+
+        .forgot-password a:hover {
+            color: var(--primary-700);
+            text-decoration: underline;
+        }
+
+        .auth-footer {
+            text-align: center;
+            margin-top: var(--space-6);
+            color: var(--gray-600);
+            font-size: var(--font-size-sm);
+        }
+
+        .auth-footer a {
+            color: var(--primary-600);
+            font-weight: var(--font-weight-medium);
+        }
+
+        /* Verification Section */
+        .verification-section {
+            display: none;
+            padding: var(--space-6);
+            background: var(--primary-50);
+            border-radius: var(--radius-lg);
+            margin-top: var(--space-6);
+            border: 1px solid var(--primary-200);
+        }
+
+        .verification-section.show {
+            display: block;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .verification-section h3 {
+            margin: 0 0 var(--space-4) 0;
+            color: var(--primary-700);
+            font-size: var(--font-size-lg);
+        }
+
+        .verification-section p {
+            margin: 0 0 var(--space-4) 0;
+            color: var(--primary-600);
+            font-size: var(--font-size-sm);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 480px) {
+            .auth-container {
+                margin: var(--space-2);
+            }
+            
+            .auth-header {
+                padding: var(--space-6);
+            }
+            
+            .auth-content {
+                padding: var(--space-6);
+            }
+            
+            .auth-tab {
+                padding: var(--space-3) var(--space-4);
+                font-size: var(--font-size-sm);
+            }
+        }
+
+        /* Accessibility */
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+
+        /* Focus styles for keyboard navigation */
+        .auth-tab:focus,
+        .auth-button:focus,
+        .form-group input:focus {
+            outline: 2px solid var(--primary-500);
+            outline-offset: 2px;
+        }
+    </style>
+</head>
+<body>
+    <div class="auth-container">
+        <div class="auth-header">
+            <h1>Welcome Back</h1>
+            <p>Sign in to access your workspace</p>
+        </div>
+        
+        <div class="auth-content">
+            <div class="auth-tabs">
+                <button class="auth-tab active" onclick="switchTab('organization')" tabindex="0">Register Company</button>
+                <button class="auth-tab" onclick="switchTab('login')" tabindex="0">Organization Login</button>
+            </div>
+
+            <div id="errorMessage" class="error-message" style="display: none;" role="alert"></div>
+            <div id="successMessage" class="success-message" style="display: none;" role="alert"></div>
+
+            <!-- Login Form -->
+            <form id="loginForm" class="auth-form" novalidate>
+                <div class="form-group">
+                    <label for="loginUsername">Username or Email</label>
+                    <input type="text" id="loginUsername" name="login" required autocomplete="username">
+                </div>
+                
+                <div class="form-group">
+                    <label for="loginPassword">Password</label>
+                    <input type="password" id="loginPassword" name="password" required autocomplete="current-password">
+                    <div class="forgot-password">
+                        <a href="/reset-password.html">Forgot Password?</a>
+                    </div>
+                </div>
+                
+                <button type="submit" class="auth-button" id="loginButton">
+                    Sign In
+                </button>
+            </form>
+
+            <!-- Registration Form -->
+            <form id="registerForm" class="auth-form" novalidate>
+                <div class="form-group">
+                    <label for="registerUsername">Username</label>
+                    <input type="text" id="registerUsername" name="username" required autocomplete="username">
+                </div>
+                
+                <div class="form-group">
+                    <label for="registerEmail">Email</label>
+                    <input type="email" id="registerEmail" name="email" required autocomplete="email">
+                </div>
+                
+                <div class="form-group">
+                    <label for="registerPassword">Password</label>
+                    <input type="password" id="registerPassword" name="password" required autocomplete="new-password">
+                    <div class="password-requirements">
+                        <strong>Password must contain:</strong>
+                        <ul>
+                            <li id="req-length">At least 8 characters</li>
+                            <li id="req-letter">At least one letter</li>
+                            <li id="req-number">At least one number</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="confirmPassword">Confirm Password</label>
+                    <input type="password" id="confirmPassword" name="confirmPassword" required autocomplete="new-password">
+                </div>
+                
+                <button type="submit" class="auth-button" id="registerButton">
+                    Create Account
+                </button>
+            </form>
+
+            <!-- Organization Registration Form -->
+            <form id="organizationForm" class="auth-form active" novalidate>
+                <div class="form-group">
+                    <label for="orgName">Organization Name</label>
+                    <input type="text" id="orgName" name="organizationName" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="orgAdminEmail">Admin Email</label>
+                    <input type="email" id="orgAdminEmail" name="adminEmail" required autocomplete="email">
+                </div>
+                
+                <div class="form-group">
+                    <label for="orgAdminPassword">Admin Password</label>
+                    <input type="password" id="orgAdminPassword" name="adminPassword" required autocomplete="new-password">
+                    <small style="color: var(--gray-500); font-size: var(--font-size-xs);">Minimum 8 characters with letters and numbers</small>
+                </div>
+                
+                <div class="form-group">
+                    <label for="orgIndustry">Industry (Optional)</label>
+                    <select id="orgIndustry" name="industry" class="form-input">
+                        <option value="">Select Industry</option>
+                        <option value="Technology">Technology</option>
+                        <option value="Healthcare">Healthcare</option>
+                        <option value="Finance">Finance</option>
+                        <option value="Education">Education</option>
+                        <option value="Manufacturing">Manufacturing</option>
+                        <option value="Retail">Retail</option>
+                        <option value="Consulting">Consulting</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                
+                <button type="submit" class="auth-button" id="organizationButton">
+                    Create Organization
+                </button>
+                
+                <p class="auth-footer">
+                    Already have an organization? <a href="#" onclick="switchTab('login')">Sign in here</a>
+                </p>
+            </form>
+
+            <!-- Email Verification Section -->
+            <div id="verificationSection" class="verification-section">
+                <h3>Verify Your Email</h3>
+                <p>We've sent a verification code to your email address. Please enter it below to complete your login.</p>
+                <form id="verificationForm">
+                    <div class="form-group">
+                        <label for="verificationCode">Verification Code</label>
+                        <input type="text" id="verificationCode" name="code" required maxlength="6" pattern="[0-9]{6}" placeholder="000000">
+                    </div>
+                    <button type="submit" class="auth-button">Verify & Continue</button>
+                </form>
+            </div>
+
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <p>Processing...</p>
+            </div>
+
+            <div class="demo-credentials" onclick="fillDemoCredentials()" role="button" tabindex="0" aria-label="Click to fill demo credentials">
+                <h4>Demo Credentials</h4>
+                <p><strong>Username:</strong> <code>demo</code></p>
+                <p><strong>Email:</strong> <code>demo@example.com</code></p>
+                <p><strong>Password:</strong> <code>demo123</code></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentTab = 'organization';
+        let isVerifying = false;
+
+        function switchTab(tab) {
+            currentTab = tab;
+            
+            // Update tab buttons
+            document.querySelectorAll('.auth-tab').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            // Update forms
+            document.querySelectorAll('.auth-form').forEach(form => {
+                form.classList.remove('active');
+            });
+            
+            if (tab === 'organization') {
+                document.getElementById('organizationForm').classList.add('active');
+            } else if (tab === 'login') {
+                document.getElementById('loginForm').classList.add('active');
+            }
+            
+            // Clear messages and hide verification
+            hideMessages();
+            hideVerification();
+        }
+
+        function showError(message) {
+            const errorDiv = document.getElementById('errorMessage');
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'flex';
+            document.getElementById('successMessage').style.display = 'none';
+        }
+
+        function showSuccess(message) {
+            const successDiv = document.getElementById('successMessage');
+            successDiv.textContent = message;
+            successDiv.style.display = 'flex';
+            document.getElementById('errorMessage').style.display = 'none';
+        }
+
+        function hideMessages() {
+            document.getElementById('errorMessage').style.display = 'none';
+            document.getElementById('successMessage').style.display = 'none';
+        }
+
+        function showVerification() {
+            document.getElementById('verificationSection').classList.add('show');
+            isVerifying = true;
+        }
+
+        function hideVerification() {
+            document.getElementById('verificationSection').classList.remove('show');
+            isVerifying = false;
+        }
+
+        function showLoading(show) {
+            document.getElementById('loading').classList.toggle('show', show);
+        }
+
+        function validatePassword(password) {
+            const requirements = {
+                length: password.length >= 8,
+                letter: /[a-zA-Z]/.test(password),
+                number: /\d/.test(password)
+            };
+
+            // Update UI
+            document.getElementById('req-length').className = requirements.length ? 'valid' : 'invalid';
+            document.getElementById('req-letter').className = requirements.letter ? 'valid' : 'invalid';
+            document.getElementById('req-number').className = requirements.number ? 'valid' : 'invalid';
+
+            return Object.values(requirements).every(req => req);
+        }
+
+        async function postJSON(url, body) {
+            const res = await fetch(url, { 
+                method: 'POST', 
+                headers: { 'Content-Type': 'application/json' }, 
+                body: JSON.stringify(body) 
+            });
+            const data = await res.json().catch(() => ({}));
+            if (!res.ok) throw new Error(data.error || 'Request failed');
+            return data;
+        }
+
+        // Password validation for registration
+        document.getElementById('registerPassword').addEventListener('input', function() {
+            validatePassword(this.value);
+        });
+
+        // Login form submission
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const data = Object.fromEntries(formData);
+            
+            showLoading(true);
+            hideMessages();
+            
+            try {
+                const response = await postJSON('/api/auth/company-login', {
+                    company: data.login, // Assuming login field contains company name
+                    email: data.login,
+                    password: data.password,
+                });
+                
+                if (response.message === 'Verification code sent') {
+                    showVerification();
+                    showSuccess('Check your email for the verification code.');
+                } else {
+                    showSuccess('Login successful! Redirecting...');
+                    setTimeout(() => {
+                        window.location.href = '/teams.html';
+                    }, 1500);
+                }
+            } catch (error) {
+                showError(error.message);
+            } finally {
+                showLoading(false);
+            }
+        });
+
+        // Verification form submission
+        document.getElementById('verificationForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const code = formData.get('code');
+            
+            showLoading(true);
+            hideMessages();
+            
+            try {
+                await postJSON('/api/auth/verify', { code });
+                showSuccess('Email verified! Redirecting...');
+                setTimeout(() => {
+                    window.location.href = '/teams.html';
+                }, 1500);
+            } catch (error) {
+                showError(error.message);
+            } finally {
+                showLoading(false);
+            }
+        });
+
+        // Registration form submission
+        document.getElementById('registerForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const data = Object.fromEntries(formData);
+            
+            // Validate password
+            if (!validatePassword(data.password)) {
+                showError('Password does not meet requirements');
+                return;
+            }
+            
+            // Check password confirmation
+            if (data.password !== data.confirmPassword) {
+                showError('Passwords do not match');
+                return;
+            }
+            
+            // Remove confirmPassword from data
+            delete data.confirmPassword;
+            
+            showLoading(true);
+            hideMessages();
+            
+            try {
+                await postJSON('/api/auth/register', data);
+                showSuccess('Registration successful! You can now login.');
+                setTimeout(() => {
+                    switchTab('login');
+                    document.getElementById('loginUsername').value = data.username;
+                }, 1500);
+            } catch (error) {
+                showError(error.message);
+            } finally {
+                showLoading(false);
+            }
+        });
+
+        // Organization registration form submission
+        document.getElementById('organizationForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const data = Object.fromEntries(formData);
+            
+            showLoading(true);
+            hideMessages();
+            
+            try {
+                const response = await postJSON('/api/organizations/register', data);
+                showSuccess('Organization created successfully! You are now logged in as admin.');
+                // Store token and redirect
+                localStorage.setItem('token', response.token);
+                localStorage.setItem('user', JSON.stringify(response.user));
+                setTimeout(() => {
+                    window.location.href = '/dashboard.html';
+                }, 2000);
+            } catch (error) {
+                showError(error.message);
+            } finally {
+                showLoading(false);
+            }
+        });
+
+        // Fill demo credentials
+        function fillDemoCredentials() {
+            if (currentTab === 'login') {
+                document.getElementById('loginUsername').value = 'demo';
+                document.getElementById('loginPassword').value = 'demo123';
+            }
+        }
+
+        // Check for URL error parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const error = urlParams.get('error');
+        if (error) {
+            showError(decodeURIComponent(error));
+        }
+
+        // Keyboard navigation for tabs
+        document.querySelectorAll('.auth-tab').forEach(tab => {
+            tab.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    this.click();
+                }
+            });
+        });
+
+        // Auto-format verification code input
+        document.getElementById('verificationCode').addEventListener('input', function(e) {
+            this.value = this.value.replace(/\D/g, '').slice(0, 6);
+        });
+
+        // Accessibility improvements
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                hideMessages();
+            }
+        });
+    </script>
+</body>
+</html>

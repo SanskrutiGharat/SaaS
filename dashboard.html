@@ -1,0 +1,890 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Remote Work Management Platform</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/design-system.css">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🚀</text></svg>">
+    <style>
+        body {
+            background: var(--gray-50);
+            min-height: 100vh;
+        }
+
+        .dashboard-header {
+            background: var(--white);
+            box-shadow: var(--shadow-sm);
+            border-bottom: 1px solid var(--gray-200);
+            position: sticky;
+            top: 0;
+            z-index: var(--z-sticky);
+        }
+
+        .dashboard-nav {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 var(--space-4);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 70px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+            font-size: var(--font-size-xl);
+            font-weight: var(--font-weight-bold);
+            color: var(--primary-600);
+            text-decoration: none;
+        }
+
+        .logo::before {
+            content: '🚀';
+            font-size: var(--font-size-2xl);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: var(--space-2);
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: var(--gray-600);
+            text-decoration: none;
+            padding: var(--space-2) var(--space-4);
+            border-radius: var(--radius-lg);
+            transition: all var(--transition-fast);
+            font-weight: var(--font-weight-medium);
+        }
+
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: var(--primary-600);
+            background: var(--primary-50);
+        }
+
+        .user-menu {
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-full);
+            background: var(--primary-600);
+            color: var(--white);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: var(--font-weight-semibold);
+            font-size: var(--font-size-sm);
+        }
+
+        .logout-btn {
+            background: var(--error-600);
+            color: var(--white);
+            border: none;
+            padding: var(--space-2) var(--space-4);
+            border-radius: var(--radius-lg);
+            cursor: pointer;
+            font-size: var(--font-size-sm);
+            font-weight: var(--font-weight-medium);
+            transition: all var(--transition-fast);
+        }
+
+        .logout-btn:hover {
+            background: var(--error-700);
+            transform: translateY(-1px);
+        }
+
+        .dashboard-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: var(--space-8) var(--space-4);
+        }
+
+        .welcome-section {
+            background: linear-gradient(135deg, var(--primary-600), var(--primary-800));
+            color: var(--white);
+            border-radius: var(--radius-2xl);
+            padding: var(--space-8);
+            margin-bottom: var(--space-8);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .welcome-section::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .welcome-section h2 {
+            font-size: var(--font-size-3xl);
+            font-weight: var(--font-weight-bold);
+            margin-bottom: var(--space-2);
+            position: relative;
+            z-index: 1;
+        }
+
+        .welcome-section p {
+            font-size: var(--font-size-lg);
+            opacity: 0.9;
+            margin: 0;
+            position: relative;
+            z-index: 1;
+        }
+
+        .quick-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--space-6);
+            margin-bottom: var(--space-8);
+        }
+
+        .stat-card {
+            background: var(--white);
+            border-radius: var(--radius-xl);
+            padding: var(--space-6);
+            text-align: center;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--gray-200);
+            transition: all var(--transition-base);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-500), var(--primary-600));
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .stat-number {
+            font-size: var(--font-size-4xl);
+            font-weight: var(--font-weight-bold);
+            color: var(--primary-600);
+            margin-bottom: var(--space-2);
+            line-height: 1;
+        }
+
+        .stat-label {
+            color: var(--gray-600);
+            font-size: var(--font-size-sm);
+            font-weight: var(--font-weight-medium);
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: var(--space-6);
+            margin-bottom: var(--space-8);
+        }
+
+        .dashboard-card {
+            background: var(--white);
+            border-radius: var(--radius-xl);
+            padding: var(--space-8);
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--gray-200);
+            transition: all var(--transition-base);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .dashboard-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-500), var(--primary-600));
+            transform: scaleX(0);
+            transition: transform var(--transition-base);
+        }
+
+        .dashboard-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-xl);
+        }
+
+        .dashboard-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .card-icon {
+            font-size: var(--font-size-5xl);
+            margin-bottom: var(--space-4);
+            display: block;
+            opacity: 0.8;
+        }
+
+        .dashboard-card h3 {
+            font-size: var(--font-size-xl);
+            font-weight: var(--font-weight-semibold);
+            margin-bottom: var(--space-3);
+            color: var(--gray-900);
+        }
+
+        .dashboard-card p {
+            color: var(--gray-600);
+            line-height: var(--line-height-relaxed);
+            margin-bottom: var(--space-6);
+        }
+
+        .card-button {
+            background: var(--primary-600);
+            color: var(--white);
+            border: none;
+            padding: var(--space-3) var(--space-6);
+            border-radius: var(--radius-lg);
+            cursor: pointer;
+            font-weight: var(--font-weight-medium);
+            transition: all var(--transition-fast);
+            width: 100%;
+        }
+
+        .card-button:hover {
+            background: var(--primary-700);
+            transform: translateY(-1px);
+        }
+
+        .recent-activity {
+            background: var(--white);
+            border-radius: var(--radius-xl);
+            padding: var(--space-8);
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--gray-200);
+        }
+
+        .recent-activity h3 {
+            font-size: var(--font-size-xl);
+            font-weight: var(--font-weight-semibold);
+            margin-bottom: var(--space-6);
+            color: var(--gray-900);
+        }
+
+        .activity-item {
+            display: flex;
+            align-items: center;
+            padding: var(--space-4) 0;
+            border-bottom: 1px solid var(--gray-100);
+            transition: all var(--transition-fast);
+        }
+
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+
+        .activity-item:hover {
+            background: var(--gray-50);
+            margin: 0 calc(-1 * var(--space-8));
+            padding-left: var(--space-8);
+            padding-right: var(--space-8);
+            border-radius: var(--radius-lg);
+        }
+
+        .activity-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: var(--radius-full);
+            background: var(--primary-100);
+            color: var(--primary-600);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: var(--space-4);
+            font-size: var(--font-size-lg);
+            flex-shrink: 0;
+        }
+
+        .activity-content {
+            flex: 1;
+        }
+
+        .activity-title {
+            font-weight: var(--font-weight-medium);
+            color: var(--gray-900);
+            margin-bottom: var(--space-1);
+        }
+
+        .activity-time {
+            font-size: var(--font-size-sm);
+            color: var(--gray-500);
+        }
+
+        /* Admin Section */
+        .admin-section {
+            border: 2px dashed var(--primary-200);
+            background: var(--primary-50);
+        }
+
+        .admin-section .card-icon {
+            color: var(--primary-600);
+        }
+
+        .admin-actions {
+            display: flex;
+            gap: var(--space-3);
+            margin-top: var(--space-4);
+        }
+
+        .admin-actions .card-button {
+            flex: 1;
+            background: var(--primary-600);
+        }
+
+        .admin-actions .card-button:last-child {
+            background: var(--gray-600);
+        }
+
+        /* Modal Styles */
+        .modal {
+            position: fixed;
+            z-index: var(--z-modal);
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: all var(--transition-base);
+        }
+
+        .modal.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            background: var(--white);
+            border-radius: var(--radius-2xl);
+            width: 90%;
+            max-width: 500px;
+            max-height: 80vh;
+            overflow-y: auto;
+            transform: scale(0.9);
+            transition: transform var(--transition-base);
+        }
+
+        .modal.show .modal-content {
+            transform: scale(1);
+        }
+
+        .modal-header {
+            padding: var(--space-6);
+            border-bottom: 1px solid var(--gray-200);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h3 {
+            margin: 0;
+            color: var(--gray-900);
+            font-size: var(--font-size-xl);
+        }
+
+        .close {
+            font-size: var(--font-size-2xl);
+            font-weight: var(--font-weight-bold);
+            cursor: pointer;
+            color: var(--gray-400);
+            transition: color var(--transition-fast);
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: var(--radius-full);
+        }
+
+        .close:hover {
+            color: var(--gray-600);
+            background: var(--gray-100);
+        }
+
+        .modal-body {
+            padding: var(--space-6);
+        }
+
+        .employee-item {
+            padding: var(--space-4);
+            border: 1px solid var(--gray-200);
+            border-radius: var(--radius-lg);
+            margin-bottom: var(--space-3);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all var(--transition-fast);
+        }
+
+        .employee-item:hover {
+            border-color: var(--primary-300);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .employee-info h4 {
+            margin: 0 0 var(--space-1) 0;
+            color: var(--gray-900);
+            font-size: var(--font-size-base);
+        }
+
+        .employee-info p {
+            margin: 0;
+            color: var(--gray-600);
+            font-size: var(--font-size-sm);
+        }
+
+        .employee-status {
+            padding: var(--space-1) var(--space-3);
+            border-radius: var(--radius-full);
+            font-size: var(--font-size-xs);
+            font-weight: var(--font-weight-medium);
+            text-transform: uppercase;
+        }
+
+        .status-pending {
+            background: var(--warning-100);
+            color: var(--warning-700);
+        }
+
+        .status-approved {
+            background: var(--success-100);
+            color: var(--success-700);
+        }
+
+        /* Loading States */
+        .loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: var(--space-8);
+            color: var(--gray-500);
+        }
+
+        .loading-spinner {
+            width: 24px;
+            height: 24px;
+            border: 2px solid var(--gray-200);
+            border-top: 2px solid var(--primary-600);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: var(--space-2);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .dashboard-nav {
+                flex-direction: column;
+                height: auto;
+                padding: var(--space-4);
+                gap: var(--space-4);
+            }
+
+            .nav-links {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .quick-stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .welcome-section {
+                padding: var(--space-6);
+            }
+
+            .welcome-section h2 {
+                font-size: var(--font-size-2xl);
+            }
+
+            .admin-actions {
+                flex-direction: column;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .quick-stats {
+                grid-template-columns: 1fr;
+            }
+
+            .dashboard-container {
+                padding: var(--space-4) var(--space-3);
+            }
+
+            .modal-content {
+                width: 95%;
+                margin: var(--space-4);
+            }
+        }
+
+        /* Accessibility */
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+
+        /* Focus styles */
+        .nav-links a:focus,
+        .card-button:focus,
+        .logout-btn:focus {
+            outline: 2px solid var(--primary-500);
+            outline-offset: 2px;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-header">
+        <div class="dashboard-nav">
+            <a href="/dashboard.html" class="logo">Remote Work Platform</a>
+            <div class="nav-links">
+                <a href="/dashboard.html" class="active">Dashboard</a>
+                <a href="/teams.html">Teams</a>
+                <a href="/kanban.html">Kanban Board</a>
+                <a href="/chat.html">Live Chat</a>
+                <a href="/about.html">About</a>
+            </div>
+            <div class="user-menu">
+                <div class="user-avatar" id="userAvatar">U</div>
+                <button class="logout-btn" onclick="logout()">Logout</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="dashboard-container">
+        <div class="welcome-section">
+            <h2 id="welcomeMessage">Welcome to your Dashboard!</h2>
+            <p>Manage your remote work efficiently with our integrated tools.</p>
+        </div>
+
+        <div class="quick-stats">
+            <div class="stat-card">
+                <div class="stat-number" id="totalTasks">0</div>
+                <div class="stat-label">Total Tasks</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="completedTasks">0</div>
+                <div class="stat-label">Completed</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="teamMembers">0</div>
+                <div class="stat-label">Team Members</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="activeProjects">0</div>
+                <div class="stat-label">Active Projects</div>
+            </div>
+        </div>
+
+        <div class="dashboard-grid">
+            <div class="dashboard-card" onclick="navigateTo('/kanban.html')">
+                <span class="card-icon">📋</span>
+                <h3>Kanban Board</h3>
+                <p>Organize and track your tasks with our visual Kanban board. Move tasks through different stages and collaborate with your team.</p>
+                <button class="card-button">Open Kanban Board</button>
+            </div>
+
+            <div class="dashboard-card" onclick="navigateTo('/teams.html')">
+                <span class="card-icon">👥</span>
+                <h3>Team Management</h3>
+                <p>Manage your team members, assign roles, and collaborate effectively. Create and manage multiple teams for different projects.</p>
+                <button class="card-button">Manage Teams</button>
+            </div>
+
+            <div class="dashboard-card" onclick="navigateTo('/chat.html')">
+                <span class="card-icon">💬</span>
+                <h3>Live Chat</h3>
+                <p>Communicate with your team in real-time. Join different chat rooms for various topics and stay connected.</p>
+                <button class="card-button">Start Chatting</button>
+            </div>
+
+            <!-- Admin Section - Only visible to admins -->
+            <div class="dashboard-card admin-section" id="adminSection" style="display: none;">
+                <span class="card-icon">👑</span>
+                <h3>Admin Panel</h3>
+                <p>Manage your organization, invite employees, and oversee team activities.</p>
+                <div class="admin-actions">
+                    <button class="card-button" onclick="showInviteModal()">Invite Employee</button>
+                    <button class="card-button" onclick="showEmployeeList()">View Employees</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="recent-activity">
+            <h3>Recent Activity</h3>
+            <div id="recentActivity">
+                <div class="activity-item">
+                    <div class="activity-icon">🎉</div>
+                    <div class="activity-content">
+                        <div class="activity-title">Welcome to your dashboard!</div>
+                        <div class="activity-time">Just now</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Invite Employee Modal -->
+    <div id="inviteModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Invite Employee</h3>
+                <span class="close" onclick="closeInviteModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="inviteForm">
+                    <div class="form-group">
+                        <label for="employeeEmail" class="form-label">Employee Email</label>
+                        <input type="email" id="employeeEmail" name="email" class="form-input" required placeholder="employee@company.com">
+                    </div>
+                    <div class="flex gap-4 justify-end">
+                        <button type="button" class="btn btn-secondary" onclick="closeInviteModal()">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Send Invitation</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Employee List Modal -->
+    <div id="employeeModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Organization Employees</h3>
+                <span class="close" onclick="closeEmployeeModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div id="employeeList">
+                    <div class="loading">
+                        <div class="loading-spinner"></div>
+                        Loading employees...
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentUser = null;
+
+        // Check authentication status
+        async function checkAuth() {
+            try {
+                const response = await fetch('/api/auth/status');
+                if (!response.ok) {
+                    window.location.href = '/login.html';
+                    return;
+                }
+                const data = await response.json();
+                currentUser = data.user;
+                
+                // Update welcome message
+                document.getElementById('welcomeMessage').textContent = `Welcome back, ${data.user.username}!`;
+                
+                // Update user avatar
+                const userAvatar = document.getElementById('userAvatar');
+                userAvatar.textContent = data.user.username.charAt(0).toUpperCase();
+                
+                // Show admin section for admin users
+                if (data.user.role === 'admin') {
+                    document.getElementById('adminSection').style.display = 'block';
+                }
+                
+                loadDashboardData();
+            } catch (error) {
+                console.error('Auth check failed:', error);
+                window.location.href = '/login.html';
+            }
+        }
+
+        // Load dashboard statistics
+        async function loadDashboardData() {
+            try {
+                // Load tasks
+                const tasksResponse = await fetch('/api/kanban/tasks');
+                if (tasksResponse.ok) {
+                    const tasks = await tasksResponse.json();
+                    document.getElementById('totalTasks').textContent = tasks.length;
+                    document.getElementById('completedTasks').textContent = tasks.filter(t => t.status === 'done').length;
+                }
+
+                // Load teams
+                const teamsResponse = await fetch('/api/teams');
+                if (teamsResponse.ok) {
+                    const teams = await teamsResponse.json();
+                    let totalMembers = 0;
+                    for (const team of teams) {
+                        const membersResponse = await fetch(`/api/teams/${team.id}/members`);
+                        if (membersResponse.ok) {
+                            const members = await membersResponse.json();
+                            totalMembers += members.length;
+                        }
+                    }
+                    document.getElementById('teamMembers').textContent = totalMembers;
+                    document.getElementById('activeProjects').textContent = teams.length;
+                }
+            } catch (error) {
+                console.error('Error loading dashboard data:', error);
+            }
+        }
+
+        // Navigation helper
+        function navigateTo(url) {
+            window.location.href = url;
+        }
+
+        // Logout function
+        async function logout() {
+            try {
+                const response = await fetch('/api/auth/logout', {
+                    method: 'POST'
+                });
+                
+                if (response.ok) {
+                    localStorage.removeItem('token');
+                    localStorage.removeItem('user');
+                    window.location.href = '/login.html';
+                } else {
+                    alert('Logout failed. Please try again.');
+                }
+            } catch (error) {
+                console.error('Logout error:', error);
+                alert('Network error during logout.');
+            }
+        }
+
+        // Admin functionality
+        function showInviteModal() {
+            document.getElementById('inviteModal').classList.add('show');
+        }
+
+        function closeInviteModal() {
+            document.getElementById('inviteModal').classList.remove('show');
+            document.getElementById('inviteForm').reset();
+        }
+
+        function showEmployeeList() {
+            document.getElementById('employeeModal').classList.add('show');
+            loadEmployees();
+        }
+
+        function closeEmployeeModal() {
+            document.getElementById('employeeModal').classList.remove('show');
+        }
+
+        async function loadEmployees() {
+            try {
+                const response = await fetch('/api/organizations/users');
+                const employees = await response.json();
+                
+                const employeeList = document.getElementById('employeeList');
+                if (employees.length === 0) {
+                    employeeList.innerHTML = '<p class="text-center text-gray-500">No employees found.</p>';
+                    return;
+                }
+                
+                employeeList.innerHTML = employees.map(emp => `
+                    <div class="employee-item">
+                        <div class="employee-info">
+                            <h4>${emp.username}</h4>
+                            <p>${emp.email}</p>
+                        </div>
+                        <div class="employee-status status-${emp.status}">
+                            ${emp.status}
+                        </div>
+                    </div>
+                `).join('');
+            } catch (error) {
+                document.getElementById('employeeList').innerHTML = '<p class="text-center text-red-500">Error loading employees.</p>';
+            }
+        }
+
+        // Invite form submission
+        document.getElementById('inviteForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const email = formData.get('email');
+            
+            try {
+                const response = await fetch('/api/organizations/invite', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    },
+                    body: JSON.stringify({ email })
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    alert('Invitation sent successfully!');
+                    closeInviteModal();
+                } else {
+                    alert('Error: ' + result.error);
+                }
+            } catch (error) {
+                alert('Error sending invitation');
+            }
+        });
+
+        // Close modals when clicking outside
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('modal')) {
+                e.target.classList.remove('show');
+            }
+        });
+
+        // Close modals with Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                document.querySelectorAll('.modal.show').forEach(modal => {
+                    modal.classList.remove('show');
+                });
+            }
+        });
+
+        // Initialize dashboard
+        document.addEventListener('DOMContentLoaded', checkAuth);
+    </script>
+</body>
+</html>

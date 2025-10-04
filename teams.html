@@ -1,0 +1,955 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teams - Remote Work Management Platform</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/design-system.css">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🚀</text></svg>">
+    <style>
+        body {
+            background: var(--gray-50);
+            min-height: 100vh;
+        }
+
+        .teams-header {
+            background: var(--white);
+            box-shadow: var(--shadow-sm);
+            border-bottom: 1px solid var(--gray-200);
+            position: sticky;
+            top: 0;
+            z-index: var(--z-sticky);
+        }
+
+        .teams-nav {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 var(--space-4);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 70px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+            font-size: var(--font-size-xl);
+            font-weight: var(--font-weight-bold);
+            color: var(--primary-600);
+            text-decoration: none;
+        }
+
+        .logo::before {
+            content: '🚀';
+            font-size: var(--font-size-2xl);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: var(--space-2);
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: var(--gray-600);
+            text-decoration: none;
+            padding: var(--space-2) var(--space-4);
+            border-radius: var(--radius-lg);
+            transition: all var(--transition-fast);
+            font-weight: var(--font-weight-medium);
+        }
+
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: var(--primary-600);
+            background: var(--primary-50);
+        }
+
+        .user-menu {
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-full);
+            background: var(--primary-600);
+            color: var(--white);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: var(--font-weight-semibold);
+            font-size: var(--font-size-sm);
+        }
+
+        .logout-btn {
+            background: var(--error-600);
+            color: var(--white);
+            border: none;
+            padding: var(--space-2) var(--space-4);
+            border-radius: var(--radius-lg);
+            cursor: pointer;
+            font-size: var(--font-size-sm);
+            font-weight: var(--font-weight-medium);
+            transition: all var(--transition-fast);
+        }
+
+        .logout-btn:hover {
+            background: var(--error-700);
+            transform: translateY(-1px);
+        }
+
+        .teams-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: var(--space-8) var(--space-4);
+        }
+
+        .teams-page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-8);
+        }
+
+        .teams-page-header h1 {
+            font-size: var(--font-size-3xl);
+            font-weight: var(--font-weight-bold);
+            color: var(--gray-900);
+            margin: 0;
+        }
+
+        .create-team-btn {
+            background: var(--primary-600);
+            color: var(--white);
+            border: none;
+            padding: var(--space-3) var(--space-6);
+            border-radius: var(--radius-lg);
+            font-weight: var(--font-weight-medium);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+        }
+
+        .create-team-btn:hover {
+            background: var(--primary-700);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .create-team-btn::before {
+            content: '+';
+            font-size: var(--font-size-lg);
+            font-weight: var(--font-weight-bold);
+        }
+
+        .create-team-form {
+            background: var(--white);
+            border-radius: var(--radius-xl);
+            padding: var(--space-8);
+            margin-bottom: var(--space-8);
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--gray-200);
+            display: none;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .create-team-form.show {
+            display: block;
+        }
+
+        .create-team-form h3 {
+            margin: 0 0 var(--space-6) 0;
+            color: var(--gray-900);
+            font-size: var(--font-size-xl);
+        }
+
+        .form-actions {
+            display: flex;
+            gap: var(--space-3);
+            justify-content: flex-end;
+            margin-top: var(--space-6);
+        }
+
+        .teams-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: var(--space-6);
+            margin-bottom: var(--space-8);
+        }
+
+        .team-card {
+            background: var(--white);
+            border-radius: var(--radius-xl);
+            padding: var(--space-6);
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--gray-200);
+            transition: all var(--transition-base);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .team-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-500), var(--primary-600));
+            transform: scaleX(0);
+            transition: transform var(--transition-base);
+        }
+
+        .team-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-xl);
+        }
+
+        .team-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .team-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: var(--space-4);
+        }
+
+        .team-name {
+            font-size: var(--font-size-xl);
+            font-weight: var(--font-weight-semibold);
+            color: var(--gray-900);
+            margin: 0;
+            flex: 1;
+        }
+
+        .team-role {
+            display: inline-block;
+            padding: var(--space-1) var(--space-3);
+            border-radius: var(--radius-full);
+            font-size: var(--font-size-xs);
+            font-weight: var(--font-weight-semibold);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .role-admin {
+            background: var(--primary-100);
+            color: var(--primary-700);
+        }
+
+        .role-member {
+            background: var(--gray-100);
+            color: var(--gray-700);
+        }
+
+        .team-description {
+            color: var(--gray-600);
+            margin-bottom: var(--space-4);
+            line-height: var(--line-height-relaxed);
+        }
+
+        .team-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-6);
+            font-size: var(--font-size-sm);
+            color: var(--gray-500);
+        }
+
+        .team-actions {
+            display: flex;
+            gap: var(--space-3);
+        }
+
+        .team-actions .btn {
+            flex: 1;
+            padding: var(--space-2) var(--space-4);
+            font-size: var(--font-size-sm);
+        }
+
+        .no-teams {
+            text-align: center;
+            padding: var(--space-16);
+            color: var(--gray-500);
+        }
+
+        .no-teams h3 {
+            margin-bottom: var(--space-4);
+            color: var(--gray-700);
+            font-size: var(--font-size-xl);
+        }
+
+        .no-teams p {
+            margin-bottom: var(--space-6);
+            font-size: var(--font-size-lg);
+        }
+
+        .no-teams .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-2);
+        }
+
+        .no-teams .btn::before {
+            content: '+';
+            font-size: var(--font-size-lg);
+            font-weight: var(--font-weight-bold);
+        }
+
+        /* Modal Styles */
+        .modal {
+            position: fixed;
+            z-index: var(--z-modal);
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: all var(--transition-base);
+        }
+
+        .modal.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            background: var(--white);
+            border-radius: var(--radius-2xl);
+            width: 90%;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+            transform: scale(0.9);
+            transition: transform var(--transition-base);
+        }
+
+        .modal.show .modal-content {
+            transform: scale(1);
+        }
+
+        .modal-header {
+            padding: var(--space-6);
+            border-bottom: 1px solid var(--gray-200);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h3 {
+            margin: 0;
+            color: var(--gray-900);
+            font-size: var(--font-size-xl);
+        }
+
+        .close {
+            font-size: var(--font-size-2xl);
+            font-weight: var(--font-weight-bold);
+            cursor: pointer;
+            color: var(--gray-400);
+            transition: color var(--transition-fast);
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: var(--radius-full);
+        }
+
+        .close:hover {
+            color: var(--gray-600);
+            background: var(--gray-100);
+        }
+
+        .modal-body {
+            padding: var(--space-6);
+        }
+
+        .members-list {
+            margin-top: var(--space-6);
+        }
+
+        .members-list h4 {
+            margin: 0 0 var(--space-4) 0;
+            color: var(--gray-900);
+            font-size: var(--font-size-lg);
+        }
+
+        .member-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: var(--space-3) 0;
+            border-bottom: 1px solid var(--gray-100);
+            transition: all var(--transition-fast);
+        }
+
+        .member-item:last-child {
+            border-bottom: none;
+        }
+
+        .member-item:hover {
+            background: var(--gray-50);
+            margin: 0 calc(-1 * var(--space-6));
+            padding-left: var(--space-6);
+            padding-right: var(--space-6);
+            border-radius: var(--radius-lg);
+        }
+
+        .member-info {
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+        }
+
+        .member-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: var(--radius-full);
+            background: var(--primary-100);
+            color: var(--primary-600);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: var(--font-weight-semibold);
+            font-size: var(--font-size-sm);
+        }
+
+        .member-details h5 {
+            margin: 0 0 var(--space-1) 0;
+            color: var(--gray-900);
+            font-size: var(--font-size-sm);
+        }
+
+        .member-details p {
+            margin: 0;
+            color: var(--gray-500);
+            font-size: var(--font-size-xs);
+        }
+
+        .member-role {
+            font-size: var(--font-size-xs);
+            color: var(--gray-500);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .add-member-form {
+            background: var(--gray-50);
+            padding: var(--space-6);
+            border-radius: var(--radius-lg);
+            margin-top: var(--space-6);
+            display: none;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .add-member-form.show {
+            display: block;
+        }
+
+        .add-member-form h4 {
+            margin: 0 0 var(--space-4) 0;
+            color: var(--gray-900);
+            font-size: var(--font-size-lg);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: var(--space-4);
+            margin-bottom: var(--space-4);
+        }
+
+        .form-actions {
+            display: flex;
+            gap: var(--space-3);
+            justify-content: flex-end;
+        }
+
+        /* Loading States */
+        .loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: var(--space-8);
+            color: var(--gray-500);
+        }
+
+        .loading-spinner {
+            width: 24px;
+            height: 24px;
+            border: 2px solid var(--gray-200);
+            border-top: 2px solid var(--primary-600);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: var(--space-2);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .teams-nav {
+                flex-direction: column;
+                height: auto;
+                padding: var(--space-4);
+                gap: var(--space-4);
+            }
+
+            .nav-links {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .teams-page-header {
+                flex-direction: column;
+                align-items: stretch;
+                gap: var(--space-4);
+            }
+
+            .teams-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .team-actions {
+                flex-direction: column;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .teams-container {
+                padding: var(--space-4) var(--space-3);
+            }
+
+            .modal-content {
+                width: 95%;
+                margin: var(--space-4);
+            }
+
+            .team-card {
+                padding: var(--space-4);
+            }
+        }
+
+        /* Accessibility */
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+
+        /* Focus styles */
+        .nav-links a:focus,
+        .btn:focus,
+        .create-team-btn:focus {
+            outline: 2px solid var(--primary-500);
+            outline-offset: 2px;
+        }
+    </style>
+</head>
+<body>
+    <div class="teams-header">
+        <div class="teams-nav">
+            <a href="/dashboard.html" class="logo">Remote Work Platform</a>
+            <div class="nav-links">
+                <a href="/dashboard.html">Dashboard</a>
+                <a href="/teams.html" class="active">Teams</a>
+                <a href="/kanban.html">Kanban Board</a>
+                <a href="/chat.html">Live Chat</a>
+                <a href="/about.html">About</a>
+            </div>
+            <div class="user-menu">
+                <div class="user-avatar" id="userAvatar">U</div>
+                <button class="logout-btn" onclick="logout()">Logout</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="teams-container">
+        <div class="teams-page-header">
+            <h1>My Teams</h1>
+            <button class="create-team-btn" onclick="showCreateTeamForm()">Create New Team</button>
+        </div>
+
+        <div class="create-team-form" id="create-team-form">
+            <h3>Create New Team</h3>
+            <form id="team-form">
+                <div class="form-group">
+                    <label for="team-name" class="form-label">Team Name</label>
+                    <input type="text" id="team-name" name="name" class="form-input" required placeholder="Enter team name">
+                </div>
+                <div class="form-group">
+                    <label for="team-description" class="form-label">Description</label>
+                    <textarea id="team-description" name="description" class="form-input" rows="3" placeholder="Describe your team's purpose..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="creator-email" class="form-label">Your Email</label>
+                    <input type="email" id="creator-email" name="creator_email" class="form-input" required placeholder="your@email.com">
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="hideCreateTeamForm()">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Create Team</button>
+                </div>
+            </form>
+        </div>
+
+        <div class="teams-grid" id="teams-grid">
+            <div class="no-teams">
+                <h3>No teams yet</h3>
+                <p>Create your first team to start collaborating!</p>
+                <button class="btn btn-primary" onclick="showCreateTeamForm()">Create Team</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Team Details Modal -->
+    <div id="team-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modal-team-name">Team Details</h3>
+                <span class="close" onclick="closeTeamModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div id="modal-content">
+                    <!-- Team details will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentUserEmail = '';
+        let teams = [];
+
+        // Initialize the page
+        function initTeams() {
+            // Get user email from localStorage or prompt
+            currentUserEmail = localStorage.getItem('userEmail');
+            if (!currentUserEmail) {
+                currentUserEmail = prompt('Please enter your email address:');
+                if (currentUserEmail) {
+                    localStorage.setItem('userEmail', currentUserEmail);
+                } else {
+                    alert('Email is required to access teams');
+                    return;
+                }
+            }
+            
+            loadTeams();
+        }
+
+        // Load teams for current user
+        function loadTeams() {
+            fetch(`/api/teams?user_email=${encodeURIComponent(currentUserEmail)}`)
+                .then(response => response.json())
+                .then(result => {
+                    if (result.success) {
+                        teams = result.teams;
+                        renderTeams();
+                    } else {
+                        console.error('Failed to load teams:', result.message);
+                        showError('Failed to load teams: ' + result.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading teams:', error);
+                    showError('Error loading teams. Please try again.');
+                });
+        }
+
+        // Render teams
+        function renderTeams() {
+            const teamsGrid = document.getElementById('teams-grid');
+            
+            if (teams.length === 0) {
+                teamsGrid.innerHTML = `
+                    <div class="no-teams">
+                        <h3>No teams yet</h3>
+                        <p>Create your first team to start collaborating!</p>
+                        <button class="btn btn-primary" onclick="showCreateTeamForm()">Create Team</button>
+                    </div>
+                `;
+                return;
+            }
+
+            teamsGrid.innerHTML = teams.map(team => `
+                <div class="team-card">
+                    <div class="team-header">
+                        <h3 class="team-name">${team.name}</h3>
+                        <span class="team-role role-${team.user_role}">${team.user_role}</span>
+                    </div>
+                    <p class="team-description">${team.description || 'No description provided'}</p>
+                    <div class="team-meta">
+                        <span>Created by: ${team.creator_name}</span>
+                        <span>${new Date(team.created_at).toLocaleDateString()}</span>
+                    </div>
+                    <div class="team-actions">
+                        <button class="btn btn-primary" onclick="viewTeamDetails(${team.id})">View Details</button>
+                        <button class="btn btn-success" onclick="openKanbanBoard(${team.id})">Open Kanban</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Show create team form
+        function showCreateTeamForm() {
+            document.getElementById('create-team-form').classList.add('show');
+            document.getElementById('creator-email').value = currentUserEmail;
+        }
+
+        // Hide create team form
+        function hideCreateTeamForm() {
+            document.getElementById('create-team-form').classList.remove('show');
+            document.getElementById('team-form').reset();
+        }
+
+        // Handle team creation
+        document.getElementById('team-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const teamData = {
+                name: formData.get('name').trim(),
+                description: formData.get('description').trim(),
+                creator_email: formData.get('creator_email').trim()
+            };
+
+            if (!teamData.name) {
+                alert('Please enter a team name');
+                return;
+            }
+
+            fetch('/api/teams', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(teamData)
+            })
+            .then(response => response.json())
+            .then(result => {
+                if (result.success) {
+                    alert('Team created successfully!');
+                    hideCreateTeamForm();
+                    loadTeams();
+                } else {
+                    alert('Failed to create team: ' + result.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Failed to create team. Please try again.');
+            });
+        });
+
+        // View team details
+        function viewTeamDetails(teamId) {
+            const team = teams.find(t => t.id === teamId);
+            if (!team) return;
+
+            // Load team members
+            fetch(`/api/teams/${teamId}/members`)
+                .then(response => response.json())
+                .then(result => {
+                    if (result.success) {
+                        showTeamModal(team, result.members);
+                    } else {
+                        alert('Failed to load team members: ' + result.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading team members:', error);
+                    alert('Failed to load team members. Please try again.');
+                });
+        }
+
+        // Show team modal
+        function showTeamModal(team, members) {
+            document.getElementById('modal-team-name').textContent = team.name;
+            document.getElementById('modal-content').innerHTML = `
+                <div>
+                    <p><strong>Description:</strong> ${team.description || 'No description provided'}</p>
+                    <p><strong>Created by:</strong> ${team.creator_name} (${team.creator_email})</p>
+                    <p><strong>Your role:</strong> <span class="team-role role-${team.user_role}">${team.user_role}</span></p>
+                </div>
+                
+                <div class="members-list">
+                    <h4>Team Members (${members.length})</h4>
+                    ${members.map(member => `
+                        <div class="member-item">
+                            <div class="member-info">
+                                <div class="member-avatar">${member.email.charAt(0).toUpperCase()}</div>
+                                <div class="member-details">
+                                    <h5>${member.email}</h5>
+                                    <p>${member.role}</p>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+
+                <div class="add-member-form" id="add-member-form">
+                    <h4>Add New Member</h4>
+                    <form id="member-form">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="member-email" class="form-label">Email Address</label>
+                                <input type="email" id="member-email" name="email" class="form-input" required placeholder="member@company.com">
+                            </div>
+                            <div class="form-group">
+                                <label for="member-role" class="form-label">Role</label>
+                                <select id="member-role" name="role" class="form-input">
+                                    <option value="member">Member</option>
+                                    <option value="admin">Admin</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-actions">
+                            <button type="button" class="btn btn-secondary" onclick="hideAddMemberForm()">Cancel</button>
+                            <button type="submit" class="btn btn-primary">Add Member</button>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="team-actions">
+                    <button class="btn btn-primary" onclick="showAddMemberForm()">+ Add Member</button>
+                    <button class="btn btn-success" onclick="openKanbanBoard(${team.id})">Open Kanban Board</button>
+                </div>
+            `;
+
+            // Handle member addition
+            document.getElementById('member-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const formData = new FormData(this);
+                const memberData = {
+                    user_email: formData.get('email').trim(),
+                    role: formData.get('role')
+                };
+
+                if (!memberData.user_email) {
+                    alert('Please enter an email address');
+                    return;
+                }
+
+                fetch(`/api/teams/${team.id}/members`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(memberData)
+                })
+                .then(response => response.json())
+                .then(result => {
+                    if (result.success) {
+                        alert('Member added successfully!');
+                        hideAddMemberForm();
+                        viewTeamDetails(team.id); // Refresh team details
+                    } else {
+                        alert('Failed to add member: ' + result.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Failed to add member. Please try again.');
+                });
+            });
+
+            document.getElementById('team-modal').classList.add('show');
+        }
+
+        // Show add member form
+        function showAddMemberForm() {
+            document.getElementById('add-member-form').classList.add('show');
+        }
+
+        // Hide add member form
+        function hideAddMemberForm() {
+            document.getElementById('add-member-form').classList.remove('show');
+            document.getElementById('member-form').reset();
+        }
+
+        // Close team modal
+        function closeTeamModal() {
+            document.getElementById('team-modal').classList.remove('show');
+        }
+
+        // Open Kanban board for team
+        function openKanbanBoard(teamId) {
+            // Store team ID and user email for Kanban board
+            localStorage.setItem('currentTeamId', teamId);
+            localStorage.setItem('userEmail', currentUserEmail);
+            
+            // Redirect to Kanban board
+            window.location.href = `kanban.html?team_id=${teamId}&user_email=${encodeURIComponent(currentUserEmail)}`;
+        }
+
+        // Logout function
+        async function logout() {
+            try {
+                const response = await fetch('/api/auth/logout', {
+                    method: 'POST'
+                });
+                
+                if (response.ok) {
+                    localStorage.removeItem('token');
+                    localStorage.removeItem('user');
+                    window.location.href = '/login.html';
+                } else {
+                    alert('Logout failed. Please try again.');
+                }
+            } catch (error) {
+                console.error('Logout error:', error);
+                alert('Network error during logout.');
+            }
+        }
+
+        // Show error message
+        function showError(message) {
+            alert(message);
+        }
+
+        // Close modals when clicking outside
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('modal')) {
+                e.target.classList.remove('show');
+            }
+        });
+
+        // Close modals with Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                document.querySelectorAll('.modal.show').forEach(modal => {
+                    modal.classList.remove('show');
+                });
+            }
+        });
+
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', initTeams);
+    </script>
+</body>
+</html>
