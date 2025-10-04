@@ -11,14 +11,36 @@
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🚀</text></svg>">
     <style>
         body {
-            background: var(--gray-50);
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
             min-height: 100vh;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(120, 219, 255, 0.3) 0%, transparent 50%);
+            z-index: -1;
+            animation: backgroundShift 20s ease-in-out infinite;
+        }
+
+        @keyframes backgroundShift {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.8; }
         }
 
         .dashboard-header {
-            background: var(--white);
-            box-shadow: var(--shadow-sm);
-            border-bottom: 1px solid var(--gray-200);
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
             position: sticky;
             top: 0;
             z-index: var(--z-sticky);
@@ -56,7 +78,7 @@
         }
 
         .nav-links a {
-            color: var(--gray-600);
+            color: #000000;
             text-decoration: none;
             padding: var(--space-2) var(--space-4);
             border-radius: var(--radius-lg);
@@ -111,16 +133,29 @@
             max-width: 1200px;
             margin: 0 auto;
             padding: var(--space-8) var(--space-4);
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .welcome-section {
-            background: linear-gradient(135deg, var(--primary-600), var(--primary-800));
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: var(--white);
             border-radius: var(--radius-2xl);
             padding: var(--space-8);
             margin-bottom: var(--space-8);
             position: relative;
             overflow: hidden;
+            box-shadow: 0 20px 40px rgba(102, 126, 234, 0.3);
         }
 
         .welcome-section::before {
@@ -128,10 +163,28 @@
             position: absolute;
             top: -50%;
             right: -20%;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(255,255,255,0.15) 0%, transparent 70%);
+            border-radius: 50%;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .welcome-section::after {
+            content: '';
+            position: absolute;
+            bottom: -30%;
+            left: -10%;
             width: 200px;
             height: 200px;
             background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
             border-radius: 50%;
+            animation: float 8s ease-in-out infinite reverse;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(180deg); }
         }
 
         .welcome-section h2 {
@@ -159,14 +212,15 @@
 
         .stat-card {
             background: var(--white);
-            border-radius: var(--radius-xl);
-            padding: var(--space-6);
+            border-radius: var(--radius-2xl);
+            padding: var(--space-8);
             text-align: center;
-            box-shadow: var(--shadow-sm);
-            border: 1px solid var(--gray-200);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            border: 1px solid var(--gray-100);
             transition: all var(--transition-base);
             position: relative;
             overflow: hidden;
+            backdrop-filter: blur(10px);
         }
 
         .stat-card::before {
@@ -176,24 +230,40 @@
             left: 0;
             right: 0;
             height: 4px;
-            background: linear-gradient(90deg, var(--primary-500), var(--primary-600));
+            background: linear-gradient(90deg, #667eea, #764ba2);
         }
 
         .stat-card:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-lg);
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
+        }
+
+        .stat-card:nth-child(1)::before {
+            background: linear-gradient(90deg, #667eea, #764ba2);
+        }
+
+        .stat-card:nth-child(2)::before {
+            background: linear-gradient(90deg, #f093fb, #f5576c);
+        }
+
+        .stat-card:nth-child(3)::before {
+            background: linear-gradient(90deg, #4facfe, #00f2fe);
+        }
+
+        .stat-card:nth-child(4)::before {
+            background: linear-gradient(90deg, #43e97b, #38f9d7);
         }
 
         .stat-number {
             font-size: var(--font-size-4xl);
             font-weight: var(--font-weight-bold);
-            color: var(--primary-600);
+            color: #000000;
             margin-bottom: var(--space-2);
             line-height: 1;
         }
 
         .stat-label {
-            color: var(--gray-600);
+            color: #333333;
             font-size: var(--font-size-sm);
             font-weight: var(--font-weight-medium);
         }
@@ -207,14 +277,15 @@
 
         .dashboard-card {
             background: var(--white);
-            border-radius: var(--radius-xl);
+            border-radius: var(--radius-2xl);
             padding: var(--space-8);
-            box-shadow: var(--shadow-sm);
-            border: 1px solid var(--gray-200);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            border: 1px solid var(--gray-100);
             transition: all var(--transition-base);
             cursor: pointer;
             position: relative;
             overflow: hidden;
+            backdrop-filter: blur(10px);
         }
 
         .dashboard-card::before {
@@ -224,55 +295,96 @@
             left: 0;
             right: 0;
             height: 4px;
-            background: linear-gradient(90deg, var(--primary-500), var(--primary-600));
+            background: linear-gradient(90deg, #667eea, #764ba2);
             transform: scaleX(0);
             transition: transform var(--transition-base);
         }
 
         .dashboard-card:hover {
-            transform: translateY(-4px);
-            box-shadow: var(--shadow-xl);
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
         }
 
         .dashboard-card:hover::before {
             transform: scaleX(1);
         }
 
+        .dashboard-card:nth-child(1)::before {
+            background: linear-gradient(90deg, #667eea, #764ba2);
+        }
+
+        .dashboard-card:nth-child(2)::before {
+            background: linear-gradient(90deg, #f093fb, #f5576c);
+        }
+
+        .dashboard-card:nth-child(3)::before {
+            background: linear-gradient(90deg, #4facfe, #00f2fe);
+        }
+
         .card-icon {
             font-size: var(--font-size-5xl);
             margin-bottom: var(--space-4);
             display: block;
-            opacity: 0.8;
+            opacity: 0.9;
+            filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1));
+            transition: all var(--transition-base);
+        }
+
+        .dashboard-card:hover .card-icon {
+            transform: scale(1.1) rotate(5deg);
+            filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.2));
         }
 
         .dashboard-card h3 {
             font-size: var(--font-size-xl);
             font-weight: var(--font-weight-semibold);
             margin-bottom: var(--space-3);
-            color: var(--gray-900);
+            color: #000000;
         }
 
         .dashboard-card p {
-            color: var(--gray-600);
+            color: #333333;
             line-height: var(--line-height-relaxed);
             margin-bottom: var(--space-6);
         }
 
         .card-button {
-            background: var(--primary-600);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: var(--white);
             border: none;
-            padding: var(--space-3) var(--space-6);
-            border-radius: var(--radius-lg);
+            padding: var(--space-4) var(--space-6);
+            border-radius: var(--radius-xl);
             cursor: pointer;
-            font-weight: var(--font-weight-medium);
-            transition: all var(--transition-fast);
+            font-weight: var(--font-weight-semibold);
+            transition: all var(--transition-base);
             width: 100%;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
         }
 
         .card-button:hover {
-            background: var(--primary-700);
-            transform: translateY(-1px);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .card-button:hover::before {
+            left: 100%;
+        }
+
+        .card-button:active {
+            transform: translateY(0);
         }
 
         .recent-activity {
@@ -287,7 +399,7 @@
             font-size: var(--font-size-xl);
             font-weight: var(--font-weight-semibold);
             margin-bottom: var(--space-6);
-            color: var(--gray-900);
+            color: #000000;
         }
 
         .activity-item {
@@ -330,13 +442,13 @@
 
         .activity-title {
             font-weight: var(--font-weight-medium);
-            color: var(--gray-900);
+            color: #000000;
             margin-bottom: var(--space-1);
         }
 
         .activity-time {
             font-size: var(--font-size-sm);
-            color: var(--gray-500);
+            color: #666666;
         }
 
         /* Admin Section */
@@ -616,7 +728,7 @@
 
         <div class="dashboard-grid">
             <div class="dashboard-card" onclick="navigateTo('/kanban.html')">
-                <span class="card-icon">📋</span>
+                <span class="card-icon">📊</span>
                 <h3>Kanban Board</h3>
                 <p>Organize and track your tasks with our visual Kanban board. Move tasks through different stages and collaborate with your team.</p>
                 <button class="card-button">Open Kanban Board</button>

@@ -9,17 +9,87 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="assets/css/design-system.css">
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🚀</text></svg>">
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#3b82f6">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Remote Work Platform">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🚀</text></svg>">
     <style>
         body {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
+            margin: 0;
+            padding: 0;
+        }
+
+        .login-nav {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 var(--space-4);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 70px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+            text-decoration: none;
+            color: #000000;
+            font-weight: var(--font-weight-bold);
+            font-size: var(--font-size-xl);
+        }
+
+        .logo-icon {
+            font-size: var(--font-size-2xl);
+        }
+
+        .logo-text {
+            color: var(--primary-600);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: var(--space-6);
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: #000000;
+            text-decoration: none;
+            padding: var(--space-2) var(--space-4);
+            border-radius: var(--radius-lg);
+            transition: all var(--transition-fast);
+            font-weight: var(--font-weight-medium);
+        }
+
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: var(--primary-600);
+            background: var(--primary-50);
+        }
+
+        .auth-container {
+            margin-top: 70px;
+            min-height: calc(100vh - 140px);
             display: flex;
             align-items: center;
             justify-content: center;
             padding: var(--space-4);
-        }
-
-        .auth-container {
             width: 100%;
             max-width: 420px;
             background: var(--white);
@@ -29,9 +99,89 @@
             animation: fadeIn 0.6s ease-out;
         }
 
+        .login-footer {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-top: 1px solid rgba(0, 0, 0, 0.1);
+            padding: var(--space-6) 0;
+            margin-top: auto;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 var(--space-4);
+            text-align: center;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: var(--space-6);
+            margin-bottom: var(--space-4);
+            flex-wrap: wrap;
+        }
+
+        .footer-links a {
+            color: #000000;
+            text-decoration: none;
+            padding: var(--space-2) var(--space-3);
+            border-radius: var(--radius-md);
+            transition: all var(--transition-fast);
+            font-weight: var(--font-weight-medium);
+        }
+
+        .footer-links a:hover {
+            color: var(--primary-600);
+            background: var(--primary-50);
+        }
+
+        .footer-text p {
+            color: #666666;
+            font-size: var(--font-size-sm);
+            margin: 0;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .nav-container {
+                padding: 0 var(--space-3);
+                height: 60px;
+            }
+
+            .logo-text {
+                display: none;
+            }
+
+            .nav-links {
+                gap: var(--space-3);
+            }
+
+            .nav-links a {
+                padding: var(--space-1) var(--space-2);
+                font-size: var(--font-size-sm);
+            }
+
+            .auth-container {
+                margin-top: 60px;
+                min-height: calc(100vh - 120px);
+                margin: 60px var(--space-3) var(--space-3);
+                padding: var(--space-6);
+            }
+
+            .footer-links {
+                flex-direction: column;
+                gap: var(--space-3);
+            }
+
+            .footer-links a {
+                padding: var(--space-2);
+            }
+        }
+
         .auth-header {
             background: linear-gradient(135deg, var(--primary-600), var(--primary-800));
-            color: var(--white);
+            color: #000000 !important;
             padding: var(--space-8);
             text-align: center;
             position: relative;
@@ -74,6 +224,7 @@
             margin-bottom: var(--space-8);
             border-bottom: 2px solid var(--gray-200);
             position: relative;
+            z-index: 5;
         }
 
         .auth-tab {
@@ -88,6 +239,24 @@
             color: var(--gray-500);
             transition: all var(--transition-fast);
             position: relative;
+            z-index: 10;
+            pointer-events: auto;
+            user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+        }
+
+        .auth-tab:hover {
+            color: var(--primary-500);
+            background: var(--primary-50);
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .auth-tab:active {
+            transform: translateY(0);
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
         }
 
         .auth-tab.active {
@@ -175,7 +344,7 @@
             width: 100%;
             padding: var(--space-4);
             background: var(--primary-600);
-            color: var(--white);
+            color: #000000 !important;
             border: none;
             border-radius: var(--radius-lg);
             font-size: var(--font-size-base);
@@ -392,6 +561,21 @@
     </style>
 </head>
 <body>
+    <!-- Navigation Header -->
+    <div class="login-nav">
+        <div class="nav-container">
+            <a href="/" class="logo">
+                <span class="logo-icon">🚀</span>
+                <span class="logo-text">Remote Work Platform</span>
+            </a>
+            <div class="nav-links">
+                <a href="/about.html">About</a>
+                <a href="/contact.html">Contact</a>
+                <a href="/" class="active">Login</a>
+            </div>
+        </div>
+    </div>
+
     <div class="auth-container">
         <div class="auth-header">
             <h1>Welcome Back</h1>
@@ -400,8 +584,8 @@
         
         <div class="auth-content">
             <div class="auth-tabs">
-                <button class="auth-tab active" onclick="switchTab('organization')" tabindex="0">Register Company</button>
-                <button class="auth-tab" onclick="switchTab('login')" tabindex="0">Organization Login</button>
+                <button class="auth-tab active" data-tab="organization" tabindex="0">Register Company</button>
+                <button class="auth-tab" data-tab="login" tabindex="0">Organization Login</button>
             </div>
 
             <div id="errorMessage" class="error-message" style="display: none;" role="alert"></div>
@@ -500,7 +684,7 @@
                 </button>
                 
                 <p class="auth-footer">
-                    Already have an organization? <a href="#" onclick="switchTab('login')">Sign in here</a>
+                    Already have an organization? <a href="#" id="switchToLoginLink">Sign in here</a>
                 </p>
             </form>
 
@@ -522,11 +706,26 @@
                 <p>Processing...</p>
             </div>
 
-            <div class="demo-credentials" onclick="fillDemoCredentials()" role="button" tabindex="0" aria-label="Click to fill demo credentials">
+            <div class="demo-credentials" id="demoCredentials" role="button" tabindex="0" aria-label="Click to fill demo credentials">
                 <h4>Demo Credentials</h4>
                 <p><strong>Username:</strong> <code>demo</code></p>
                 <p><strong>Email:</strong> <code>demo@example.com</code></p>
                 <p><strong>Password:</strong> <code>demo123</code></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="login-footer">
+        <div class="footer-content">
+            <div class="footer-links">
+                <a href="/about.html">About Us</a>
+                <a href="/contact.html">Contact</a>
+                <a href="/reset-password.html">Forgot Password?</a>
+                <a href="/register-employee.html">Register Employee</a>
+            </div>
+            <div class="footer-text">
+                <p>&copy; 2024 Remote Work Platform. All rights reserved.</p>
             </div>
         </div>
     </div>
@@ -536,13 +735,16 @@
         let isVerifying = false;
 
         function switchTab(tab) {
+            console.log('Switching to tab:', tab);
             currentTab = tab;
             
             // Update tab buttons
             document.querySelectorAll('.auth-tab').forEach(btn => {
                 btn.classList.remove('active');
+                if (btn.getAttribute('data-tab') === tab) {
+                    btn.classList.add('active');
+                }
             });
-            event.target.classList.add('active');
             
             // Update forms
             document.querySelectorAll('.auth-form').forEach(form => {
@@ -760,14 +962,48 @@
             showError(decodeURIComponent(error));
         }
 
-        // Keyboard navigation for tabs
+        // Event listeners for tabs
         document.querySelectorAll('.auth-tab').forEach(tab => {
+            // Click event listener
+            tab.addEventListener('click', function(e) {
+                e.preventDefault();
+                const tabName = this.getAttribute('data-tab');
+                console.log('Tab clicked:', tabName);
+                switchTab(tabName);
+            });
+            
+            // Keyboard event listener
             tab.addEventListener('keydown', function(e) {
                 if (e.key === 'Enter' || e.key === ' ') {
                     e.preventDefault();
-                    this.click();
+                    const tabName = this.getAttribute('data-tab');
+                    console.log('Tab activated via keyboard:', tabName);
+                    switchTab(tabName);
                 }
             });
+        });
+
+        // Event listener for switch to login link
+        document.getElementById('switchToLoginLink').addEventListener('click', function(e) {
+            e.preventDefault();
+            console.log('Switch to login link clicked');
+            switchTab('login');
+        });
+
+        // Event listener for demo credentials
+        document.getElementById('demoCredentials').addEventListener('click', function(e) {
+            e.preventDefault();
+            console.log('Demo credentials clicked');
+            fillDemoCredentials();
+        });
+
+        // Keyboard event listener for demo credentials
+        document.getElementById('demoCredentials').addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                console.log('Demo credentials activated via keyboard');
+                fillDemoCredentials();
+            }
         });
 
         // Auto-format verification code input
@@ -781,6 +1017,19 @@
                 hideMessages();
             }
         });
+
+        // Register Service Worker for PWA functionality
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then((registration) => {
+                        console.log('SW registered: ', registration);
+                    })
+                    .catch((registrationError) => {
+                        console.log('SW registration failed: ', registrationError);
+                    });
+            });
+        }
     </script>
 </body>
 </html>

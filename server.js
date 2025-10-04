@@ -10,6 +10,10 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const session = require('express-session');
 const nodemailer = require('nodemailer');
+const compression = require('compression');
+const helmet = require('helmet');
+const rateLimit = require('express-rate-limit');
+const { v4: uuidv4 } = require('uuid');
 
 const app = express();
 const server = http.createServer(app);
@@ -33,10 +37,48 @@ const emailTransporter = nodemailer.createTransport({
     }
 });
 
-// Middleware
-app.use(cors());
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+// Security middleware
+app.use(helmet({
+    contentSecurityPolicy: {
+        directives: {
+            defaultSrc: ["'self'"],
+            styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
+            fontSrc: ["'self'", "https://fonts.gstatic.com"],
+            scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
+            scriptSrcAttr: ["'unsafe-inline'"],
+            imgSrc: ["'self'", "data:", "https:"],
+            connectSrc: ["'self'", "ws:", "wss:", "https://fonts.googleapis.com", "https://fonts.gstatic.com"]
+        }
+    },
+    crossOriginEmbedderPolicy: false
+}));
+
+// Compression middleware
+app.use(compression());
+
+// Rate limiting
+const limiter = rateLimit({
+    windowMs: parseInt(process.env.RATE_LIMIT_WINDOW_MS || '900000', 10), // 15 minutes
+    max: parseInt(process.env.RATE_LIMIT_MAX_REQUESTS || '100', 10), // limit each IP to 100 requests per windowMs
+    message: {
+        error: 'Too many requests from this IP, please try again later.'
+    },
+    standardHeaders: true,
+    legacyHeaders: false,
+});
+
+// Apply rate limiting to API routes
+app.use('/api/', limiter);
+
+// CORS configuration
+app.use(cors({
+    origin: process.env.NODE_ENV === 'production' ? process.env.ALLOWED_ORIGINS?.split(',') : true,
+    credentials: true
+}));
+
+// Body parsing middleware
+app.use(bodyParser.json({ limit: '10mb' }));
+app.use(bodyParser.urlencoded({ extended: true, limit: '10mb' }));
 
 // Session middleware
 app.use(session({
@@ -49,17 +91,59 @@ app.use(session({
     }
 }));
 
-// Serve static files from the current directory
-app.use(express.static('.'));
+// Serve static files with caching headers
+app.use(express.static('.', {
+    maxAge: process.env.NODE_ENV === 'production' ? '1d' : '0',
+    etag: true,
+    lastModified: true
+}));
+
+// Serve manifest.json with proper headers
+app.get('/manifest.json', (req, res) => {
+    res.setHeader('Content-Type', 'application/json');
+    res.setHeader('Cache-Control', 'public, max-age=86400'); // 1 day
+    res.sendFile(path.join(__dirname, 'manifest.json'));
+});
+
+// Serve service worker with proper headers
+app.get('/sw.js', (req, res) => {
+    res.setHeader('Content-Type', 'application/javascript');
+    res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+    res.sendFile(path.join(__dirname, 'sw.js'));
+});
 
 // Health check route (public)
 app.get('/health', (req, res) => {
     res.json({ ok: true });
 });
 
-// Redirect root to login page
+// Public routes - no authentication required
 app.get('/', (req, res) => {
-    return res.redirect('/login.html');
+    res.sendFile(path.join(__dirname, 'login.html'));
+});
+
+app.get('/login.html', (req, res) => {
+    res.sendFile(path.join(__dirname, 'login.html'));
+});
+
+app.get('/index.html', (req, res) => {
+    res.sendFile(path.join(__dirname, 'index.html'));
+});
+
+app.get('/reset-password.html', (req, res) => {
+    res.sendFile(path.join(__dirname, 'reset-password.html'));
+});
+
+app.get('/register-employee.html', (req, res) => {
+    res.sendFile(path.join(__dirname, 'register-employee.html'));
+});
+
+app.get('/about.html', (req, res) => {
+    res.sendFile(path.join(__dirname, 'about.html'));
+});
+
+app.get('/contact.html', (req, res) => {
+    res.sendFile(path.join(__dirname, 'contact.html'));
 });
 
 // Simple test route (public)

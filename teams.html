@@ -123,7 +123,7 @@
         .teams-page-header h1 {
             font-size: var(--font-size-3xl);
             font-weight: var(--font-weight-bold);
-            color: var(--gray-900);
+            color: var(--black);
             margin: 0;
         }
 
@@ -170,7 +170,7 @@
 
         .create-team-form h3 {
             margin: 0 0 var(--space-6) 0;
-            color: var(--gray-900);
+            color: var(--black);
             font-size: var(--font-size-xl);
         }
 
@@ -230,7 +230,7 @@
         .team-name {
             font-size: var(--font-size-xl);
             font-weight: var(--font-weight-semibold);
-            color: var(--gray-900);
+            color: var(--black);
             margin: 0;
             flex: 1;
         }
@@ -256,7 +256,7 @@
         }
 
         .team-description {
-            color: var(--gray-600);
+            color: var(--black  );
             margin-bottom: var(--space-4);
             line-height: var(--line-height-relaxed);
         }
@@ -267,7 +267,7 @@
             align-items: center;
             margin-bottom: var(--space-6);
             font-size: var(--font-size-sm);
-            color: var(--gray-500);
+            color: var(--black);
         }
 
         .team-actions {
@@ -339,6 +339,7 @@
             max-width: 600px;
             max-height: 80vh;
             overflow-y: auto;
+            color: var(--black);
             transform: scale(0.9);
             transition: transform var(--transition-base);
         }
@@ -357,7 +358,7 @@
 
         .modal-header h3 {
             margin: 0;
-            color: var(--gray-900);
+            color: var(--black);
             font-size: var(--font-size-xl);
         }
 
@@ -382,6 +383,7 @@
 
         .modal-body {
             padding: var(--space-6);
+            color: var(--black);
         }
 
         .members-list {
@@ -390,7 +392,7 @@
 
         .members-list h4 {
             margin: 0 0 var(--space-4) 0;
-            color: var(--gray-900);
+            color: var(--black);
             font-size: var(--font-size-lg);
         }
 
@@ -436,7 +438,7 @@
 
         .member-details h5 {
             margin: 0 0 var(--space-1) 0;
-            color: var(--gray-900);
+            color: var(--black);
             font-size: var(--font-size-sm);
         }
 
@@ -468,7 +470,7 @@
 
         .add-member-form h4 {
             margin: 0 0 var(--space-4) 0;
-            color: var(--gray-900);
+            color: var(--black);
             font-size: var(--font-size-lg);
         }
 
@@ -512,6 +514,7 @@
                 padding: var(--space-4);
                 gap: var(--space-4);
             }
+            
 
             .nav-links {
                 flex-wrap: wrap;
@@ -523,6 +526,9 @@
                 align-items: stretch;
                 gap: var(--space-4);
             }
+            .modal-content div p {
+    color: var(--black);
+}
 
             .teams-grid {
                 grid-template-columns: 1fr;
@@ -540,6 +546,7 @@
         @media (max-width: 480px) {
             .teams-container {
                 padding: var(--space-4) var(--space-3);
+                color: var(--black);
             }
 
             .modal-content {
@@ -567,6 +574,7 @@
         .create-team-btn:focus {
             outline: 2px solid var(--primary-500);
             outline-offset: 2px;
+            color: var(--black);
         }
     </style>
 </head>
@@ -791,9 +799,9 @@
             document.getElementById('modal-team-name').textContent = team.name;
             document.getElementById('modal-content').innerHTML = `
                 <div>
-                    <p><strong>Description:</strong> ${team.description || 'No description provided'}</p>
-                    <p><strong>Created by:</strong> ${team.creator_name} (${team.creator_email})</p>
-                    <p><strong>Your role:</strong> <span class="team-role role-${team.user_role}">${team.user_role}</span></p>
+                    <p text-color="black"><strong>Description:</strong> ${team.description || 'No description provided'}</p>
+                    <p text-color="black"><strong>Created by:</strong> ${team.creator_name} (${team.creator_email})</p>
+                    <p text-color="black"><strong>Your role:</strong> <span class="team-role role-${team.user_role}">${team.user_role}</span></p>
                 </div>
                 
                 <div class="members-list">
