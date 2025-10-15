@@ -181,7 +181,7 @@ h1, h2, h3, h4, h5, h6, p, span, div, a, button, input, textarea, select, label 
 
 /* Force black text on all elements */
 * {
-  color: var(--black) !important;
+  color: var(--text-primary) !important;
 }
 
 /* Override any conflicting styles */
